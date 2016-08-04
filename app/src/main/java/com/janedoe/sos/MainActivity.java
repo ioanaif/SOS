@@ -18,23 +18,39 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import android.os.Environment;
+import android.provider.MediaStore;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button help_button;
     private ImageView display_pick;
+    String mCurrentPhotoPath;
 
     private void takePicture(){
         Intent camera = new Intent("android.media.action.IMAGE_CAPTURE");
-        startActivityForResult(camera, 1);
+        if (camera.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(camera, 1);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            display_pick.setImageBitmap(imageBitmap);
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                byte[] photo = convertBitmapToByteArray(bitmap);
+                String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                //addEventToDatabase(location, time, message, photo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
