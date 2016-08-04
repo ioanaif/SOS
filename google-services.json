@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "57947566460",
+    "firebase_url": "https://soss-536ad.firebaseio.com",
+    "project_id": "soss-536ad",
+    "storage_bucket": "soss-536ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57947566460:android:86e4774ac527fb38",
+        "android_client_info": {
+          "package_name": "com.janedoe.sos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57947566460-pp90g3t34u549v2t5bhntv0qphv7jd7d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.janedoe.sos",
+            "certificate_hash": "E4CF511C0E31954FF40A8400AEED4DD5261A6D76"
+          }
+        },
+        {
+          "client_id": "57947566460-12tufht8v09200pm0tctp90kuvpgq49n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOL1ZXmg0W_LWQJ_YyCO1HmSdgU5jqsn0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "57947566460-12tufht8v09200pm0tctp90kuvpgq49n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
