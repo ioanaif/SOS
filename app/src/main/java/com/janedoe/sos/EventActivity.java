@@ -1,0 +1,227 @@
+package com.janedoe.sos;
+
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+
+import java.util.ArrayList;
+
+public class EventActivity extends Fragment {
+
+    private ListView mList;
+    private MyAdapter mAdapter;
+    private int RADIUS = 50000;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().setContentView(R.layout.activity_event);
+
+//        this.overridePendingTransition(R.anim.anim,R.anim.anim_out);
+
+        mList = (ListView) getActivity().findViewById(R.id.list);
+        mAdapter = new MyAdapter();
+        mList.setAdapter(mAdapter);
+
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference allevents = dbRef.child("events");//root
+
+
+        ChildEventListener eventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {//new accident added
+                Event e = dataSnapshot.getValue(Event.class);//information of event
+                LocationManager lm = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+
+                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                //get my current location
+                Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+
+                Log.d("BLABLA, Current loc",""+currloc);
+
+                String loc = e.location; //GPS coordinates from database (string)
+                double lat = Double.parseDouble(loc.split(",")[0]);
+                double lon = Double.parseDouble(loc.split(",")[1]);
+                Location eventloc = new Location("");
+                eventloc.setLongitude(lon);
+                eventloc.setLatitude(lat);
+                Log.d("BLABLA,Event  loc",""+eventloc);
+
+
+                float distance = eventloc.distanceTo(currloc);//distance in meters
+                Log.d("BLABLA",""+distance+" meters");
+                //check if location is near by: 1 Km
+                if (distance <= RADIUS){
+                        //add event to list
+                    mAdapter.addEvent(e);
+                }
+
+
+                //show list to user
+//                Toast.makeText(EventActivity.this, e.location + " " + e.numberOfAccepts, Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                Toast.makeText(EventActivity.this, "New info available", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//                Toast.makeText(EventActivity.this, "Event removed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        allevents.addChildEventListener(eventListener);
+
+
+
+    }
+    public class ViewHolder{
+
+        public TextView time;
+        public TextView loc;
+
+
+    }
+    private class MyAdapter extends BaseAdapter {
+
+        private ArrayList<Event> events;
+
+        public MyAdapter () {
+            events = new ArrayList<>();
+        }
+
+        public void addEvent(Event e) {
+            events.add(e);
+            notifyDataSetChanged();
+        }
+
+        public void removeEvent(int pos) {
+            events.remove(pos);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return events.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return events.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final View v;
+            final int pos = position;
+            ViewHolder holder;
+            if (convertView==null) {
+                LayoutInflater li = LayoutInflater.from(getActivity());
+                v = li.inflate(R.layout.event_object,null);
+
+                Button ac = (Button) v.findViewById(R.id.show);
+//                Button dec = (Button) v.findViewById(R.id.decline);
+
+                ac.setTag(position);
+//                dec.setTag(position);
+
+                holder = new ViewHolder();
+                holder.loc = (TextView) v.findViewById(R.id.loc); //save pointers
+                holder.time = (TextView) v.findViewById(R.id.time);
+
+
+                v.setTag(holder);
+
+            }
+            else{
+                v = convertView;
+                holder = (ViewHolder)v.getTag(); //get holder object which has the pointers to the children
+            }
+
+            Event curr = events.get(position);
+            holder.time.setText(curr.time);
+            holder.loc.setText(curr.message);
+
+
+            return v;
+
+        }
+
+
+
+    }
+
+    public void declineEvent(View view){
+        //get event
+
+        int pos = (int) view.getTag(); //index of event to be removed
+
+        //remove event from list
+        mAdapter.removeEvent(pos);
+
+
+    }
+    public void acceptEvent(View view){
+        int pos = (int) view.getTag();//index of event to be removed
+        //start new activity with map
+        //Intent intent = new Intent(,);
+        Log.d("Accept","This is working!!!");
+
+    }
+}
