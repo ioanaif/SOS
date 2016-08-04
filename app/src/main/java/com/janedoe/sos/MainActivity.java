@@ -20,6 +20,21 @@ import android.support.v4.app.*;
 public class MainActivity extends AppCompatActivity {
 
     private Button help_button;
+    private ImageView display_pick;
+
+    private void takePicture(){
+        Intent camera = new Intent("android.media.action.IMAGE_CAPTURE");
+        startActivityForResult(camera, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            display_pick.setImageBitmap(imageBitmap);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +42,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         help_button = (Button) findViewById(R.id.help_button);
+        display_pick = (ImageView) findViewById(R.id.image_view) ;
 
         help_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                Intent camera = new Intent("android.media.action.IMAGE_CAPTURE");
-                startActivityForResult(camera, 0);
+                takePicture();
             }
 
         });
