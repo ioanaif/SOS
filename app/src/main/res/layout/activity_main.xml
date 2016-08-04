@@ -9,8 +9,21 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.janedoe.sos.MainActivity">
 
-    <TextView
+    <Button
+        android:id="@+id/help_button"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:background="@drawable/round_button"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="help"
+        android:textSize="80dp"
+        android:textColor="@drawable/text_help"
+        android:onClick="selfDestruct"/>
+
+    <ImageView
+        android:id="@+id/image_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_height="wrap_content" />
 </RelativeLayout>
