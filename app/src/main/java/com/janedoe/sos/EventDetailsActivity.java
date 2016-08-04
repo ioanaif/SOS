@@ -1,15 +1,20 @@
 package com.janedoe.sos;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,6 +25,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -107,6 +113,9 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         private void takePicture(){
             Intent camera = new Intent("android.media.action.IMAGE_CAPTURE");
+            File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
+            camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+            photoUri = Uri.fromFile(photo);
             if (camera.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(camera, 1);
             }
@@ -114,15 +123,25 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode,resultCode,data);
             if (requestCode == 1 && resultCode == RESULT_OK) {
-                Uri imageUri = data.getData();
+                Uri selectedImage = photoUri;
+                getContentResolver().notifyChange(selectedImage, null);
+                ImageView imageView = (ImageView) findViewById(R.id.ImageView);
+                ContentResolver cr = getContentResolver();
+                Bitmap bitmap;
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    bitmap = MediaStore.Images.Media.getBitmap(cr, selectedImage);
+                    imageView.setImageBitmap(bitmap);
                     photo = convertBitmapToByteArray(bitmap);
+                    Toast.makeText(this, selectedImage.toString(), Toast.LENGTH_LONG).show();
                     time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                     //addEventToDatabase(location, time, message, photo);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
+                            .show();
+                    Log.e("Camera", e.toString());
                 }
 
             }

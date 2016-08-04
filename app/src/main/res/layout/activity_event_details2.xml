@@ -23,6 +23,11 @@
         android:background="#ffffff"
         android:textSize="20sp" />
 
+    <ImageView
+        android:id="@+id/ImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
