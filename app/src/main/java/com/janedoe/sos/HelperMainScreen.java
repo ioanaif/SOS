@@ -14,14 +14,20 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class HelperMainScreen extends AppCompatActivity {
 
     private StorageReference storage = FirebaseStorage.getInstance().getReference();
+    private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private Bitmap bitmap;
     private String geo;
+
+
+    private String key;
 
 
     @Override
@@ -30,7 +36,7 @@ public class HelperMainScreen extends AppCompatActivity {
         setContentView(R.layout.activity_helper_main_screen);
 
 
-        Intent i = this.getIntent();
+        Intent i = getIntent();
         geo = i.getStringExtra("extraGeo");
         String date = i.getStringExtra("extraDate");
         String massage = i.getStringExtra("extraMessage");
@@ -39,7 +45,7 @@ public class HelperMainScreen extends AppCompatActivity {
         ((TextView) findViewById(R.id.textInHelperScreen)).setText(massage);
         ((TextView) findViewById(R.id.dateInHelperScreen)).setText(date);
         //geo = "37.7749,-122.4194";
-        String key = i.getStringExtra("extraFileKey");
+        key = i.getStringExtra("extraFileKey");
         downloadImage(key);
     }
 
@@ -53,6 +59,7 @@ public class HelperMainScreen extends AppCompatActivity {
 
     public void acceptClick(View v){
         ((Button) findViewById(R.id.acceptButton1)).setVisibility(View.GONE);
+        database.child("events").child(key).child("isAccepted").setValue("true");
 
     }
 
