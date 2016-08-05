@@ -55,6 +55,7 @@ public class EventActivity extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//new accident added
                 Event e = dataSnapshot.getValue(Event.class);//information of event
                 String key = dataSnapshot.getKey();
+                Log.d("The activity",""+getActivity());
                 LocationManager lm = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
 
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

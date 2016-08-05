@@ -1,6 +1,8 @@
 package com.janedoe.sos;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -58,6 +60,17 @@ public class EventDetailsActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     String message = editText.getText().toString();
                     addEventToDatabase("50.4,10.3", message, time, photo);
+
+                    AlertDialog.Builder dialog  = new AlertDialog.Builder(EventDetailsActivity.this);
+                    dialog.setMessage("Message sent");
+                    dialog.setPositiveButton("OK", null);
+                    dialog.create().show();
+
+                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
                 }
             });
 
