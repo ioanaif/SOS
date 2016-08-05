@@ -1,5 +1,6 @@
 package com.janedoe.sos;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -43,6 +44,8 @@ public class EventActivity extends Fragment {
         View view = inflater.inflate(R.layout.activity_event, container, false);
         view.setBackgroundColor(Color.LTGRAY);
 
+        final Activity activity = getActivity();
+
         mList = (ListView) view.findViewById(R.id.list);
         mAdapter = new MyAdapter();
         mList.setAdapter(mAdapter);
@@ -56,17 +59,17 @@ public class EventActivity extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event e = dataSnapshot.getValue(Event.class);
                 String key = dataSnapshot.getKey();
-                LocationManager lm = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+                LocationManager lm = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 
-                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(activity.getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
 
                 Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if(currloc == null) {
-                    Toast.makeText((EventActivity.this).getActivity()                                                                                                                                                                                                                                                                                                                                                                                                                                        , "Cannot connect to GPS", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText((EventActivity.this).activity                                                                                                                                                                                                                                                                                                                                                                                                                                        , "Cannot connect to GPS", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -120,6 +123,7 @@ public class EventActivity extends Fragment {
 
 
     }
+
     public class MyAdapter extends BaseAdapter {
 
         private ArrayList<Event> events;
@@ -159,20 +163,20 @@ public class EventActivity extends Fragment {
             return 0;
         }
 
+        public int getIndex(Event e){
+            return events.indexOf(e);
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final View v;
             final int pos = position;
             ViewHolder holder;
+            Button ac;
             if (convertView==null) {
                 LayoutInflater li = LayoutInflater.from(getActivity());
                 v = li.inflate(R.layout.event_object,null);
 
-                Button ac = (Button) v.findViewById(R.id.show);
-//                Button dec = (Button) v.findViewById(R.id.decline);
-
-                ac.setTag(position);
-//                dec.setTag(position);
 
                 holder = new ViewHolder();
                 holder.loc = (TextView) v.findViewById(R.id.desc); //save pointers
@@ -185,9 +189,14 @@ public class EventActivity extends Fragment {
             else{
                 v = convertView;
                 holder = (ViewHolder)v.getTag(); //get holder object which has the pointers to the children
+
             }
 
+            ac = (Button) v.findViewById(R.id.show);
+
             Event curr = events.get(position);
+            ac.setTag(curr);
+
             holder.time.setText(curr.time);
             holder.loc.setText(curr.message);
 
@@ -211,18 +220,5 @@ public class EventActivity extends Fragment {
 
 
     }
-    public void acceptEvent(View view){
-        int pos = (int) view.getTag();//index of event to be removed
-        Event e = (Event) mAdapter.getItem(pos);
-        String key = (String) mAdapter.getKey(pos);
-        //start new activity with map
-        Intent intent = new Intent(getActivity(),HelperMainScreen.class);
-        intent.putExtra("extraGeo",e.location);
-        intent.putExtra("extraDate",e.time);
-        intent.putExtra("extraMessage",e.message);
-        intent.putExtra("extraFileKey",key);
 
-        //Log.d("Accept","This is working!!!");
-
-    }
 }

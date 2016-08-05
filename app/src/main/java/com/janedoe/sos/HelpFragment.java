@@ -50,12 +50,14 @@ public class HelpFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_help, container, false);
 
+        final Activity activity = getActivity();
+
         helpButton = (Button) view.findViewById(R.id.help_button);
 
         helpButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.shrink_on_press);
+                Animation animation = AnimationUtils.loadAnimation(activity, R.anim.shrink_on_press);
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
                     v.startAnimation(animation);
                 }
@@ -68,10 +70,10 @@ public class HelpFragment extends Fragment {
 
         helpButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                runFadeOutAnimationOn(getActivity(), v);
-                Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                runFadeOutAnimationOn(activity, v);
+                Intent intent = new Intent(activity, EventDetailsActivity.class);
                 startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.right_in, R.anim.anim_button);
+                activity.overridePendingTransition(R.anim.right_in, R.anim.anim_button);
             }
 
         });
