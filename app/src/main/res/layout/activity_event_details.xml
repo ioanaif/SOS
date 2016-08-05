@@ -38,8 +38,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Get help"
+        android:id="@+id/sendbutton"
         android:layout_alignParentBottom="true"
-        android:text="Send"
-        android:id="@+id/sendbutton"/>
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

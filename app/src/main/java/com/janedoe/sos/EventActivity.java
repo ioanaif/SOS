@@ -1,10 +1,12 @@
 package com.janedoe.sos;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 
+import android.renderscript.ScriptGroup;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -24,7 +26,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class EventActivity extends Fragment {
 
@@ -50,6 +54,8 @@ public class EventActivity extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//new accident added
                 Event e = dataSnapshot.getValue(Event.class);//information of event
+                String key = dataSnapshot.getKey();
+                Log.d("The activity",""+getActivity());
                 LocationManager lm = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
 
                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -63,8 +69,8 @@ public class EventActivity extends Fragment {
                     return;
                 }
                 //get my current location
-//                Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                Location currloc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                Location currloc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
 
                 Log.d("BLABLA, Current loc",""+currloc);
@@ -83,7 +89,8 @@ public class EventActivity extends Fragment {
                 //check if location is near by: 1 Km
                 if (distance <= RADIUS){
                         //add event to list
-                    mAdapter.addEvent(e);
+                    mAdapter.addEvent(key,e);
+
                 }
 
 
@@ -127,21 +134,25 @@ public class EventActivity extends Fragment {
 
 
     }
-    private class MyAdapter extends BaseAdapter {
+    public class MyAdapter extends BaseAdapter {
 
         private ArrayList<Event> events;
+        private ArrayList<String> keys;
 
         public MyAdapter () {
             events = new ArrayList<>();
+            keys = new ArrayList<>();
         }
 
-        public void addEvent(Event e) {
+        public void addEvent(String key,Event e) {
             events.add(e);
+            keys.add(key);
             notifyDataSetChanged();
         }
 
         public void removeEvent(int pos) {
             events.remove(pos);
+            keys.remove(pos);
             notifyDataSetChanged();
         }
 
@@ -154,7 +165,9 @@ public class EventActivity extends Fragment {
         public Object getItem(int position) {
             return events.get(position);
         }
-
+        public Object getKey(int position){
+            return keys.get(position);
+        }
         @Override
         public long getItemId(int position) {
             return 0;
@@ -210,11 +223,19 @@ public class EventActivity extends Fragment {
         mAdapter.removeEvent(pos);
 
 
+
     }
     public void acceptEvent(View view){
         int pos = (int) view.getTag();//index of event to be removed
+        Event e = (Event) mAdapter.getItem(pos);
+        String key = (String) mAdapter.getKey(pos);
         //start new activity with map
-        //Intent intent = new Intent(,);
+        Intent intent = new Intent(getActivity(),HelperMainScreen.class);
+        intent.putExtra("extraGeo",e.location);
+        intent.putExtra("extraDate",e.time);
+        intent.putExtra("extraMessage",e.message);
+        intent.putExtra("extraFileKey",key);
+
         Log.d("Accept","This is working!!!");
 
     }

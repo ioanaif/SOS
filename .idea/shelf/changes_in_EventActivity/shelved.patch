@@ -1,0 +1,194 @@
+Index: app/src/main/java/com/janedoe/sos/MyFirebaseInstanceIDService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/janedoe/sos/MyFirebaseInstanceIDService.java	(revision )
++++ app/src/main/java/com/janedoe/sos/MyFirebaseInstanceIDService.java	(revision )
+@@ -0,0 +1,25 @@
++package com.janedoe.sos;
++
++import android.util.Log;
++
++import com.google.firebase.iid.FirebaseInstanceId;
++import com.google.firebase.iid.FirebaseInstanceIdService;
++
++/**
++ * Created by demouser on 8/4/16.
++ */
++public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
++
++    @Override
++    public void onTokenRefresh() {
++        super.onTokenRefresh();
++        // Get updated InstanceID token.
++        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
++        Log.d("Refreshed", "Refreshed token: " + refreshedToken);
++
++        // If you want to send messages to this application instance or
++        // manage this apps subscriptions on the server side, send the
++        // Instance ID token to your app server.
++        //sendRegistrationToServer(refreshedToken);
++    }
++}
+Index: app/src/main/java/com/janedoe/sos/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/janedoe/sos/MainActivity.java	(revision 7d85301ab8d869e2723cfb53e5fb18962c4de976)
++++ app/src/main/java/com/janedoe/sos/MainActivity.java	(revision )
+@@ -15,6 +15,9 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_main);
+ 
++        Intent intent = new Intent(MainActivity.this, HelperMainScreen.class);
++        startActivity(intent);
++
+         help_button = (Button) findViewById(R.id.help_button);
+ 
+         help_button.setOnClickListener(new View.OnClickListener() {
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 7d85301ab8d869e2723cfb53e5fb18962c4de976)
++++ app/src/main/AndroidManifest.xml	(revision )
+@@ -26,6 +26,10 @@
+             </intent-filter>
+         </activity>
+         <activity android:name=".EventDetailsActivity"></activity>
++        <activity android:name=".HelperMainScreen"></activity>
++
++
++
+     </application>
+ 
+ </manifest>
+\ No newline at end of file
+Index: google-services.json
+===================================================================
+--- google-services.json	(revision 7d85301ab8d869e2723cfb53e5fb18962c4de976)
++++ app/google-services.json	(revision )
+@@ -1,0 +1,0 @@
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision 7d85301ab8d869e2723cfb53e5fb18962c4de976)
++++ app/src/main/res/values/strings.xml	(revision )
+@@ -4,4 +4,7 @@
+     <string name="show">Show</string>
+     <string name="desc">Description</string>
+     <string name="time">Time</string>
++    <string name="acceptString">ACCEPT</string>
++    <string name="declineString">DECLINE</string>
++    <string name="mapString">MAP</string>
+ </resources>
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/modules.xml	(revision 7d85301ab8d869e2723cfb53e5fb18962c4de976)
++++ .idea/modules.xml	(revision )
+@@ -3,6 +3,8 @@
+   <component name="ProjectModuleManager">
+     <modules>
+       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
++      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
++      <module fileurl="file://$PROJECT_DIR$/sos.iml" filepath="$PROJECT_DIR$/sos.iml" />
+       <module fileurl="file://$PROJECT_DIR$/sos.iml" filepath="$PROJECT_DIR$/sos.iml" />
+     </modules>
+   </component>
+\ No newline at end of file
+Index: app/src/main/java/com/janedoe/sos/EventActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/janedoe/sos/EventActivity.java	(revision 7d85301ab8d869e2723cfb53e5fb18962c4de976)
++++ app/src/main/java/com/janedoe/sos/EventActivity.java	(revision )
+@@ -32,6 +32,8 @@
+ 
+ 
+ import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.LinkedHashMap;
+ 
+ public class EventActivity extends Fragment {
+ 
+@@ -58,6 +60,7 @@
+             @Override
+             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//new accident added
+                 Event e = dataSnapshot.getValue(Event.class);//information of event
++                String key = dataSnapshot.getKey();
+                 LocationManager lm = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+ 
+                 if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+@@ -90,7 +93,7 @@
+                 //check if location is near by: 1 Km
+                 if (distance <= RADIUS){
+                         //add event to list
+-                    mAdapter.addEvent(e);
++                    mAdapter.addEvent(key,e);
+                 }
+ 
+ 
+@@ -136,18 +139,27 @@
+     private class MyAdapter extends BaseAdapter {
+ 
+         private ArrayList<Event> events;
++//        private HashMap<String,Event>events;
++        private ArrayList<String>keys;
+ 
+         public MyAdapter () {
++
+             events = new ArrayList<>();
++            keys = new ArrayList<>();
++//            events = new LinkedHashMap<>();
+         }
+ 
+-        public void addEvent(Event e) {
++        public void addEvent(String key,Event e) {
++//            events.put(key,e);
++            keys.add(key);
+             events.add(e);
+             notifyDataSetChanged();
+         }
+ 
+         public void removeEvent(int pos) {
++
+             events.remove(pos);
++            keys.remove(pos);
+             notifyDataSetChanged();
+         }
+ 
+@@ -161,6 +173,9 @@
+             return events.get(position);
+         }
+ 
++        public Object getKey(int position) {
++            return keys.get(position);
++        }
+         @Override
+         public long getItemId(int position) {
+             return 0;
+@@ -219,8 +234,14 @@
+     }
+     public void acceptEvent(View view){
+         int pos = (int) view.getTag();//index of event to be removed
++        Event e = (Event) mAdapter.getItem(pos);
++        String key = (String)mAdapter.getKey(pos);
+         //start new activity with map
+-        //Intent intent = new Intent(,);
++        Intent intent = new Intent(getActivity(),HelperMainScreen.class);
++        intent.putExtra("extraGeo",e.location);
++        intent.putExtra("extraDate",e.time);
++        intent.putExtra("extraMessage",e.message);
++        intent.putExtra("extraFileKey",key);
+         Log.d("Accept","This is working!!!");
+ 
+     }
