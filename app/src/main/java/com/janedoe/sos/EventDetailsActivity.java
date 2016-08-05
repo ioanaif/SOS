@@ -20,12 +20,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -54,6 +59,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private Uri photoUri = Uri.parse("");
     private byte[] photo = new byte[2];
+    DatabaseReference allevents = database.child("events");//root
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +75,41 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String message = editText.getText().toString();
                 String location = getCurrentLocation();
-                if(location != null) {
+                if (location != null) {
                     addEventToDatabase(getCurrentLocation(), message, photo);
+                    ((TextView) findViewById(R.id.message)).setVisibility(View.VISIBLE);
+                    ((ImageView) findViewById((R.id.ImageView))).setVisibility(View.GONE);
+                    ((EditText) findViewById((R.id.edittext))).setVisibility(View.GONE);
+                    ((Button) findViewById((R.id.sendbutton))).setVisibility(View.GONE);
+                    ((Button) findViewById((R.id.photobutton))).setVisibility(View.GONE);
+                    ((TextView) findViewById((R.id.textview))).setVisibility(View.GONE);
                     Toast.makeText(EventDetailsActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(EventDetailsActivity.this, "Message cannot be sent because your location is not found",
                             Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
+        DatabaseReference allevents = database.child("events");//root
+        ChildEventListener eventListener = new ChildEventListener() {
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Event e = dataSnapshot.getValue(Event.class);//information of event
+                String key = dataSnapshot.getKey();
+                if (e.isAccepted.equals("true") && e.userId == FirebaseInstanceId.getInstance().getToken()) {
+                    ((TextView) findViewById(R.id.message)).setText("Help is on the way!!!");
+                }
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
+        };
+        allevents.addChildEventListener(eventListener);
 
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,23 +120,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
 
-    private String addEventToDatabase(String location, String message, byte[] photo) {
-        DatabaseReference events = database.child("events");
-        DatabaseReference newEvent = events.push();
-
-        String time = new SimpleDateFormat("yyyy.MM.dd_HH:mm:ss").format(new Date());
-        uploadPicture(photo, newEvent.getKey());
-        Event event = new Event(location, time, message, photoUri.toString());
-
-        newEvent.setValue(event);
-        return newEvent.getKey();
-    }
-
     /**
      * uploads picture and sets its uri in global variable photoUri.
      * photoUri is not changed when uploading does not succeed.
+     *
      * @param photo can be null
-     * @param key unique key for object we want to add to database, used to create unique path for photo
+     * @param key   unique key for object we want to add to database, used to create unique path for photo
      */
     private void uploadPicture(byte[] photo, String key) {
         StorageReference path = storage.child(key + ".jpg");
@@ -125,45 +145,33 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
 
-    private byte[] convertBitmapToByteArray(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        return stream.toByteArray();
-    }
+    /**
+     * @return concatenation of latitude , longitude
+     * never throws an exception.
+     * in case of any exceptions returns null string.
+     */
 
-    private void takePicture(){
-        Intent camera = new Intent("android.media.action.IMAGE_CAPTURE");
-        File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
-        camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-        photoUri = Uri.fromFile(photo);
-        if (camera.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(camera, 1);
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Uri selectedImage = photoUri;
             getContentResolver().notifyChange(selectedImage, null);
             ImageView imageView = (ImageView) findViewById(R.id.ImageView);
             ContentResolver cr = getContentResolver();
             Bitmap bitmap;
+
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(cr, selectedImage);
                 imageView.setImageBitmap(bitmap);
                 photo = convertBitmapToByteArray(bitmap);
                 Toast.makeText(this, selectedImage.toString(), Toast.LENGTH_LONG).show();
-
-                //addEventToDatabase(location, time, message, photo);
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
                 Log.e("Camera", e.toString());
             }
-
         }
     }
 
@@ -173,21 +181,47 @@ public class EventDetailsActivity extends AppCompatActivity {
      * never throws an exception.
      * in case of any exceptions returns null string.
      */
+
     private String getCurrentLocation() {
         try {
             LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-            if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return null;
             }
             Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             return "" + location.getLatitude() + "," + location.getLongitude();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
+
+    private byte[] convertBitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
+    }
+
+    private String addEventToDatabase(String location, String message, byte[] photo) {
+        DatabaseReference events = database.child("events");
+        DatabaseReference newEvent = events.push();
+
+        String time = new SimpleDateFormat("yyyy.MM.dd_HH:mm:ss").format(new Date());
+        uploadPicture(photo, newEvent.getKey());
+        Event event = new Event(location, time, message, photoUri.toString());
+
+        newEvent.setValue(event);
+        return newEvent.getKey();
+    }
+
+    private void takePicture() {
+        Intent camera = new Intent("android.media.action.IMAGE_CAPTURE");
+        File photo = new File(Environment.getExternalStorageDirectory(), "Pic.jpg");
+        camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+        photoUri = Uri.fromFile(photo);
+        if (camera.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(camera, 1);
+        }
+    }
 }
-
-
-

@@ -7,6 +7,11 @@
     <string name="mapString">MAP</string>
     <string name="acceptString">accept</string>
     <string name="declineString">DECLINE</string>
+    <string name="sendingMessages">Sending Messages...</string>
+    <string name="helpMessages">Help is on the way!!!</string>
+
+
+
 
 
 </resources>
