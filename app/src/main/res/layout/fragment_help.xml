@@ -6,8 +6,8 @@
 
     <Button
         android:id="@+id/help_button"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         android:background="@drawable/sos_button"
         android:gravity="center_vertical|center_horizontal"
         android:layout_centerHorizontal="true"
