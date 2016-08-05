@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".EventDetailsActivity"></activity>
+        <activity android:name=".HelperMainScreen"></activity>
     </application>
 
 </manifest>

@@ -4,4 +4,9 @@
     <string name="show">Show</string>
     <string name="desc">Description</string>
     <string name="time">Time</string>
+    <string name="mapString">MAP</string>
+    <string name="acceptString">ACCEPT</string>
+    <string name="declineString">DECLINE</string>
+
+
 </resources>
