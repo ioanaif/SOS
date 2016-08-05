@@ -18,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -47,55 +48,40 @@ public class EventActivity extends Fragment {
         mList.setAdapter(mAdapter);
 
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference allevents = dbRef.child("events");//root
+        DatabaseReference allevents = dbRef.child("events");
 
 
         ChildEventListener eventListener = new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {//new accident added
-                Event e = dataSnapshot.getValue(Event.class);//information of event
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Event e = dataSnapshot.getValue(Event.class);
                 String key = dataSnapshot.getKey();
-                Log.d("The activity",""+getActivity());
                 LocationManager lm = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
 
-                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                //get my current location
+
                 Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                Location currloc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
+                if(currloc == null) {
+                    Toast.makeText((EventActivity.this).getActivity()                                                                                                                                                                                                                                                                                                                                                                                                                                        , "Cannot connect to GPS", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                Log.d("BLABLA, Current loc",""+currloc);
+                String loc = e.location;
 
-                String loc = e.location; //GPS coordinates from database (string)
                 double lat = Double.parseDouble(loc.split(",")[0]);
                 double lon = Double.parseDouble(loc.split(",")[1]);
                 Location eventloc = new Location("");
                 eventloc.setLongitude(lon);
                 eventloc.setLatitude(lat);
-                Log.d("BLABLA,Event  loc",""+eventloc);
 
-
-                float distance = eventloc.distanceTo(currloc);//distance in meters
-                Log.d("BLABLA",""+distance+" meters");
-                //check if location is near by: 1 Km
-                if (distance <= RADIUS){
-                        //add event to list
-                    mAdapter.addEvent(key,e);
-
+                float distance = eventloc.distanceTo(currloc);
+                if (distance <= RADIUS) {
+                    mAdapter.addEvent(key, e);
                 }
-
-
-                //show list to user
-//                Toast.makeText(EventActivity.this, e.location + " " + e.numberOfAccepts, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -189,8 +175,8 @@ public class EventActivity extends Fragment {
 //                dec.setTag(position);
 
                 holder = new ViewHolder();
-                holder.loc = (TextView) v.findViewById(R.id.loc); //save pointers
-                holder.time = (TextView) v.findViewById(R.id.time);
+                holder.loc = (TextView) v.findViewById(R.id.desc); //save pointers
+                holder.time = (TextView) v.findViewById(R.id.timetext);
 
 
                 v.setTag(holder);
@@ -236,7 +222,7 @@ public class EventActivity extends Fragment {
         intent.putExtra("extraMessage",e.message);
         intent.putExtra("extraFileKey",key);
 
-        Log.d("Accept","This is working!!!");
+        //Log.d("Accept","This is working!!!");
 
     }
 }

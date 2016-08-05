@@ -3,45 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.janedoe.sos.MainActivity"
-
-    >
+    tools:context="com.janedoe.sos.MainActivity">
 
     <TextView
         android:id="@+id/desc"
         android:text="@string/desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:layout_alignParentLeft="true"
-
-
-        />
-    <TextView
-        android:id="@+id/loc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:layout_below="@id/desc"
-
-
-        />
+        android:textSize="20sp"
+        android:layout_alignParentLeft="true" />
 
     <TextView
         android:id="@+id/timetext"
         android:text="@string/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/loc"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        />
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/timetext"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        />
+        android:layout_alignParentBottom="true" />
 
     <!--RelativeLayout
         android:layout_width="match_parent"
@@ -58,8 +35,7 @@
         android:id="@+id/show"
 
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@id/time"
+        android:layout_alignParentBottom="true"
         android:onClick="acceptEvent"
 
         />
