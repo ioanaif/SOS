@@ -47,7 +47,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_event_details2);
+            setContentView(R.layout.activity_event_details);
 
             sendButton = (Button) findViewById(R.id.sendbutton);
             photoButton = (Button) findViewById(R.id.photobutton);
@@ -57,7 +57,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     String message = editText.getText().toString();
-                    addEventToDatabase("a", message, time, photo);
+                    addEventToDatabase("50.4,10.3", message, time, photo);
                 }
             });
 

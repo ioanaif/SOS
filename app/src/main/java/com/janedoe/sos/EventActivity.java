@@ -1,28 +1,21 @@
 package com.janedoe.sos;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -37,16 +30,15 @@ public class EventActivity extends Fragment {
 
     private ListView mList;
     private MyAdapter mAdapter;
-    private int RADIUS = 50000;
+    private int RADIUS = 1000;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getActivity().setContentView(R.layout.activity_event);
 
-//        this.overridePendingTransition(R.anim.anim,R.anim.anim_out);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_event, container, false);
+        view.setBackgroundColor(Color.LTGRAY);
 
-        mList = (ListView) getActivity().findViewById(R.id.list);
+        mList = (ListView) view.findViewById(R.id.list);
         mAdapter = new MyAdapter();
         mList.setAdapter(mAdapter);
 
@@ -71,7 +63,8 @@ public class EventActivity extends Fragment {
                     return;
                 }
                 //get my current location
-                Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Location currloc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
 
                 Log.d("BLABLA, Current loc",""+currloc);
@@ -123,6 +116,7 @@ public class EventActivity extends Fragment {
 
         allevents.addChildEventListener(eventListener);
 
+        return view;
 
 
     }
