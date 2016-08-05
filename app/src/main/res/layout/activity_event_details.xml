@@ -12,12 +12,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="200dp"
         android:text="Give informations:"
         android:id="@+id/textview"/>
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
+        android:lines="5"
+        android:gravity="top|left"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/textview"
         android:id="@+id/edittext"
         android:background="#ffffff"
@@ -26,7 +30,9 @@
     <ImageView
         android:id="@+id/ImageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="400dp"
+        android:layout_below="@+id/photobutton"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:layout_width="80dp"
@@ -41,7 +47,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:text="Get help"
+        android:text="Send request"
         android:textColor="@color/white"
         android:textSize="18dp"
         android:background="@drawable/circle_button"

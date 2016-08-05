@@ -42,7 +42,7 @@ public class HelpFragment extends Fragment {
 
         target.startAnimation(s);
         Timer t = new Timer();
-        //t.schedule(target.clearAnimation(), 100);
+        //t.schedule(clearAnimation(), 100);
     }
 
     @Override
