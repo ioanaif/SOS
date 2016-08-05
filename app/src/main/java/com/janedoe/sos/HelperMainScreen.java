@@ -39,11 +39,12 @@ public class HelperMainScreen extends AppCompatActivity {
         Intent i = getIntent();
         geo = i.getStringExtra("extraGeo");
         String date = i.getStringExtra("extraDate");
+        String date_display = date.replaceFirst("_", " at ");
         String massage = i.getStringExtra("extraMessage");
         //String date = "1.1.2016";
         //String massage = "Helpppp me!";
         ((TextView) findViewById(R.id.textInHelperScreen)).setText(massage);
-        ((TextView) findViewById(R.id.dateInHelperScreen)).setText(date);
+        ((TextView) findViewById(R.id.dateInHelperScreen)).setText(date_display);
         //geo = "37.7749,-122.4194";
         key = i.getStringExtra("extraFileKey");
         downloadImage(key);

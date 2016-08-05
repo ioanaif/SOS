@@ -197,7 +197,7 @@ public class EventActivity extends Fragment {
             Event curr = events.get(position);
             ac.setTag(curr);
 
-            holder.time.setText(curr.time);
+            holder.time.setText(curr.time.replaceFirst("_", " at "));
             holder.loc.setText(curr.message);
 
 

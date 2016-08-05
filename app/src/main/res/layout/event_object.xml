@@ -2,22 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.janedoe.sos.MainActivity">
-
-    <TextView
-        android:id="@+id/desc"
-        android:text="@string/desc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_alignParentLeft="true" />
 
     <TextView
         android:id="@+id/timetext"
         android:text="@string/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:id="@+id/desc"
+        android:text="@string/desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="20sp"
         android:layout_alignParentBottom="true" />
 
     <!--RelativeLayout
@@ -29,13 +32,15 @@
     </RelativeLayout android:layout_below="@+id/relativeLayout"-->
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
         android:text="@string/show"
         android:id="@+id/show"
-
+        android:textSize="10dp"
+        android:textColor="@color/white"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:background="@drawable/the_button"
         android:onClick="acceptEvent"
 
         />

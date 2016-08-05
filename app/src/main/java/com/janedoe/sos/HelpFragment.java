@@ -41,8 +41,6 @@ public class HelpFragment extends Fragment {
         s.addAnimation(shrink_anim);
 
         target.startAnimation(s);
-        Timer t = new Timer();
-        //t.schedule(clearAnimation(), 100);
     }
 
     @Override

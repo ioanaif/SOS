@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:id="@+id/eventPhoto"
-        android:src="@mipmap/avatar_m"
+        android:src="@drawable/dummy_hurt"
         android:layout_centerInParent="true"
         android:layout_weight="1"
 
