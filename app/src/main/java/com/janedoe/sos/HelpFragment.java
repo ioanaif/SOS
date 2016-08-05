@@ -79,4 +79,11 @@ public class HelpFragment extends Fragment {
         });
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        helpButton.clearAnimation();
+    }
 }
