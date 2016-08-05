@@ -53,15 +53,9 @@ public class HelperMainScreen extends AppCompatActivity {
 
     public void acceptClick(View v){
         ((Button) findViewById(R.id.acceptButton1)).setVisibility(View.GONE);
-        ((Button) findViewById(R.id.declineButton1)).setVisibility(View.GONE);
 
     }
-    public void declineClick(View v){
-        Intent backToEventActivity = new Intent(HelperMainScreen.this, EventActivity.class);
-        startActivity(backToEventActivity);
 
-
-    }
 
     private void downloadImage(String key) {
         StorageReference photo = storage.child(key + ".jpg");

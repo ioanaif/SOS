@@ -27,10 +27,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textInHelperScreen"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:textColor="#000000"
         />
     <TextView
         android:layout_width="match_parent"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_height="wrap_content"
         android:id="@+id/dateInHelperScreen"
         android:textAlignment="viewEnd"
@@ -67,13 +69,6 @@
             android:background="#00cc00"
             />
 
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:id="@+id/declineButton1"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:text="@string/declineString"
-            android:background="#ff0000"/>
 
     </LinearLayout>
 
