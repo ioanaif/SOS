@@ -17,6 +17,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Timer;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +41,8 @@ public class HelpFragment extends Fragment {
         s.addAnimation(shrink_anim);
 
         target.startAnimation(s);
+        Timer t = new Timer();
+        //t.schedule(target.clearAnimation(), 100);
     }
 
     @Override
