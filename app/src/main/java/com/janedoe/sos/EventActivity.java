@@ -1,5 +1,6 @@
 package com.janedoe.sos;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -43,6 +44,8 @@ public class EventActivity extends Fragment {
         View view = inflater.inflate(R.layout.activity_event, container, false);
         view.setBackgroundColor(Color.LTGRAY);
 
+        final Activity activity = getActivity();
+
         mList = (ListView) view.findViewById(R.id.list);
         mAdapter = new MyAdapter();
         mList.setAdapter(mAdapter);
@@ -56,17 +59,17 @@ public class EventActivity extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event e = dataSnapshot.getValue(Event.class);
                 String key = dataSnapshot.getKey();
-                LocationManager lm = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+                LocationManager lm = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 
-                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(activity.getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
 
                 Location currloc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if(currloc == null) {
-                    Toast.makeText((EventActivity.this).getActivity()                                                                                                                                                                                                                                                                                                                                                                                                                                        , "Cannot connect to GPS", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText((EventActivity.this).activity                                                                                                                                                                                                                                                                                                                                                                                                                                        , "Cannot connect to GPS", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
