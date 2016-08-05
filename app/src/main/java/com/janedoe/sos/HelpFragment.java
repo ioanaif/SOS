@@ -52,6 +52,7 @@ public class HelpFragment extends Fragment {
 
         helpButton = (Button) view.findViewById(R.id.help_button);
 
+//        view.getForeground().setAlpha(120);
         helpButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

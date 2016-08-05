@@ -12,9 +12,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="200dp"
-        android:text="Give informations:"
-        android:id="@+id/textview"/>
+        android:layout_centerHorizontal="true"
+        android:text="Can you give us more information?"
+        android:id="@+id/textview"
+        android:textSize="16sp"/>
 
     <EditText
         android:layout_width="400dp"
