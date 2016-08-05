@@ -5,7 +5,7 @@
     <string name="desc">Description</string>
     <string name="time">Time</string>
     <string name="mapString">MAP</string>
-    <string name="acceptString">ACCEPT</string>
+    <string name="acceptString">accept</string>
     <string name="declineString">DECLINE</string>
 
 
