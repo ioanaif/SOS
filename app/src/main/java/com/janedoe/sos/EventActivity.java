@@ -120,6 +120,7 @@ public class EventActivity extends Fragment {
 
 
     }
+
     public class MyAdapter extends BaseAdapter {
 
         private ArrayList<Event> events;
@@ -159,20 +160,20 @@ public class EventActivity extends Fragment {
             return 0;
         }
 
+        public int getIndex(Event e){
+            return events.indexOf(e);
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final View v;
             final int pos = position;
             ViewHolder holder;
+            Button ac;
             if (convertView==null) {
                 LayoutInflater li = LayoutInflater.from(getActivity());
                 v = li.inflate(R.layout.event_object,null);
 
-                Button ac = (Button) v.findViewById(R.id.show);
-//                Button dec = (Button) v.findViewById(R.id.decline);
-
-                ac.setTag(position);
-//                dec.setTag(position);
 
                 holder = new ViewHolder();
                 holder.loc = (TextView) v.findViewById(R.id.desc); //save pointers
@@ -185,9 +186,14 @@ public class EventActivity extends Fragment {
             else{
                 v = convertView;
                 holder = (ViewHolder)v.getTag(); //get holder object which has the pointers to the children
+
             }
 
+            ac = (Button) v.findViewById(R.id.show);
+
             Event curr = events.get(position);
+            ac.setTag(curr);
+
             holder.time.setText(curr.time);
             holder.loc.setText(curr.message);
 
@@ -211,18 +217,5 @@ public class EventActivity extends Fragment {
 
 
     }
-    public void acceptEvent(View view){
-        int pos = (int) view.getTag();//index of event to be removed
-        Event e = (Event) mAdapter.getItem(pos);
-        String key = (String) mAdapter.getKey(pos);
-        //start new activity with map
-        Intent intent = new Intent(getActivity(),HelperMainScreen.class);
-        intent.putExtra("extraGeo",e.location);
-        intent.putExtra("extraDate",e.time);
-        intent.putExtra("extraMessage",e.message);
-        intent.putExtra("extraFileKey",key);
 
-        //Log.d("Accept","This is working!!!");
-
-    }
 }

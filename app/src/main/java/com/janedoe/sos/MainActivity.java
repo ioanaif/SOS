@@ -48,11 +48,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void acceptEvent(View view){
-        int pos = (int) view.getTag();//index of event to be removed
+//        int pos = (int) view.getTag();//index of event to be removed
         ListView mlist = (ListView)findViewById(R.id.list);
         EventActivity.MyAdapter mAdapter = (EventActivity.MyAdapter) mlist.getAdapter();
-        Event e = (Event) mAdapter.getItem(pos);
+
+        Event e = (Event) view.getTag();
+        int pos = mAdapter.getIndex(e); //get index of event
+
         String key = (String) mAdapter.getKey(pos);
+
         //start new activity with map
         Intent intent = new Intent(MainActivity.this,HelperMainScreen.class);
         intent.putExtra("extraGeo",e.location);
