@@ -9,4 +9,11 @@
     <color name="orange4">#FFA500</color>
     <color name="orange5">#FF8C00</color>
     <color name="white">#ffffff</color>
+    <color name="primary">#f44336</color>
+    <color name="primary_dark">#D32f2f</color>
+    <color name="primary_light">#ffcdd2</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+
+
 </resources>

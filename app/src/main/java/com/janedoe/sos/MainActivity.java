@@ -3,12 +3,12 @@ package com.janedoe.sos;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager pager;
     private SharedPreferences sharedPreferences;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
         pager = (ViewPager) findViewById(R.id.viewpager);
         pager.setAdapter(adapter);
+
+
+
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -46,7 +50,13 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return 2;
         }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return position == 0 ? "Help" : "Event Log";
+        }
     }
+
     public void acceptEvent(View view){
 //        int pos = (int) view.getTag();//index of event to be removed
         ListView mlist = (ListView)findViewById(R.id.list);

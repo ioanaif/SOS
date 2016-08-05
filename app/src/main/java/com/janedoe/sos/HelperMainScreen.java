@@ -25,8 +25,6 @@ public class HelperMainScreen extends AppCompatActivity {
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private Bitmap bitmap;
     private String geo;
-
-
     private String key;
 
 
@@ -59,7 +57,16 @@ public class HelperMainScreen extends AppCompatActivity {
     }
 
     public void acceptClick(View v){
-        ((Button) findViewById(R.id.acceptButton1)).setVisibility(View.GONE);
+        Button chat = ((Button) findViewById(R.id.acceptButton1));
+
+        if (chat.getText().equals("Chat")){
+            Intent intent = new Intent(HelperMainScreen.this, Chat_Room.class);
+            intent.putExtra("event_key",key);
+            startActivity(intent);
+        }
+        else{
+            chat.setText("Chat");
+        }
         database.child("events").child(key).child("isAccepted").setValue("true");
 
     }
