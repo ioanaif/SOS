@@ -8,13 +8,9 @@
         android:id="@+id/help_button"
         android:layout_width="280dp"
         android:layout_height="280dp"
-        android:background="@drawable/round_button"
+        android:background="@drawable/sos_button"
         android:gravity="center_vertical|center_horizontal"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="help"
-        android:textSize="80dp"
-        android:textColor="@drawable/text_help"
-        android:onClick="selfDestruct"/>
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>
