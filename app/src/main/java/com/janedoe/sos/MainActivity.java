@@ -1,12 +1,15 @@
 package com.janedoe.sos;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -15,12 +18,13 @@ public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter adapter;
     private ViewPager pager;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        sharedPreferences = getSharedPreferences("login", Context.MODE_PRIVATE);
         adapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         pager = (ViewPager) findViewById(R.id.viewpager);
@@ -61,4 +65,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(TextUtils.isEmpty(sharedPreferences.getString("user",null))){
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+        }
+    }
 }
