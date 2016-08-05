@@ -4,11 +4,15 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,7 +63,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     String message = editText.getText().toString();
-                    addEventToDatabase("50.4,10.3", message, time, photo);
+                    addEventToDatabase(getCurrentLocation(), message, time, photo);
 
                     AlertDialog.Builder dialog  = new AlertDialog.Builder(EventDetailsActivity.this);
                     dialog.setMessage("Message sent");
@@ -158,6 +162,17 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
 
             }
+        }
+
+        private String getCurrentLocation() {
+            LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return null;
+            }
+            Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            return "" + location.getLatitude() + "," + location.getLongitude();
         }
     }
 
